@@ -1,0 +1,46 @@
+﻿<UserControl x:Class="ForexPOS.Receipt"
+     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+	xmlns:clr="clr-namespace:System;assembly=mscorlib"
+     xmlns:local="clr-namespace:ForexPOS"
+     mc:Ignorable="d" 
+     Height="Auto" Background="White" FontFamily="Consolas">
+	<UserControl.Resources>
+		<clr:Int32 x:Key="58mm">164</clr:Int32>
+		<clr:Int32 x:Key="80mm">227</clr:Int32>
+	</UserControl.Resources>
+
+	<UserControl.DataContext>
+		<local:ReceiptModel Width="{StaticResource 80mm}"/>
+	</UserControl.DataContext>
+
+	<StackPanel x:Name="RootPanel" Width="{Binding Width}" Margin="0,10,0,0">
+		<!-- Header -->
+		<TextBlock Text="ForexPOS" FontWeight="Bold" FontSize="16" TextAlignment="Center"/>
+		<TextBlock Text="{Binding Date}" TextAlignment="Center" />
+
+		<Separator/>
+
+		<!-- Source -->
+		<DockPanel LastChildFill="True" Margin="10">
+			<TextBlock DockPanel.Dock="Left" Text="From: " FontWeight="Bold"/>
+			<TextBlock Text="{Binding Source}" TextAlignment="Right"/>
+		</DockPanel>
+		<DockPanel LastChildFill="True" Margin="10">
+			<TextBlock DockPanel.Dock="Left" Text="To: " FontWeight="Bold"/>
+			<TextBlock Text="{Binding Target}" TextAlignment="Right"/>
+		</DockPanel>
+		<DockPanel LastChildFill="True" Margin="10">
+			<TextBlock DockPanel.Dock="Left" Text="Rate: " FontWeight="Bold"/>
+			<TextBlock Text="{Binding Change}" TextAlignment="Right"/>
+		</DockPanel>
+		<Separator Margin="0,10,0,10"/>
+
+		<!-- Thank you message -->
+		<TextBlock Text="Thank you!" FontWeight="Bold" TextAlignment="Center"/>
+		<TextBlock Text="Signature: _____________________________________" FontSize="10" TextAlignment="Left" Margin="0,10,0,0" />
+		<TextBlock Text="Powered by INFOKOM" FontSize="8" TextAlignment="Center" Margin="0,8,0,0"/>
+	</StackPanel>
+</UserControl>

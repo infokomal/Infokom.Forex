@@ -1,0 +1,120 @@
+﻿<Window x:Class="ForexPOS.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:clr="clr-namespace:System;assembly=mscorlib"
+        Title="MainWindow" Width="960" Height="540" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" WindowStyle="ToolWindow">
+
+	<Grid Margin="10">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="3*"/>
+			<RowDefinition/>
+		</Grid.RowDefinitions>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="*"/>
+			<ColumnDefinition Width="*"/>
+			<ColumnDefinition Width="Auto"/>
+		</Grid.ColumnDefinitions>
+
+		<!-- Display for input amount -->
+		<TextBox x:Name="TextBoxSource" Grid.Row="0" Grid.Column="0"  Margin="2" FontSize="36" FontWeight="Bold" IsReadOnly="True" TextAlignment="Right" Text="0.00 ALL"/>
+		<TextBox x:Name="TextBoxTarget" Grid.Row="0" Grid.Column="1"  Margin="2" FontSize="36" FontWeight="Bold" IsReadOnly="True" TextAlignment="Right" Text="0.00 EUR"/>
+
+		<!-- Numeric Keyboard -->
+		<UniformGrid Grid.Row="1" Grid.Column="0" Columns="3" Margin="2">
+			<Button Content="7" FontSize="20" Click="NumberButton_Click"/>
+			<Button Content="8" FontSize="20" Click="NumberButton_Click"/>
+			<Button Content="9" FontSize="20" Click="NumberButton_Click"/>
+			<Button Content="4" FontSize="20" Click="NumberButton_Click"/>
+			<Button Content="5" FontSize="20" Click="NumberButton_Click"/>
+			<Button Content="6" FontSize="20" Click="NumberButton_Click"/>
+			<Button Content="1" FontSize="20" Click="NumberButton_Click"/>
+			<Button Content="2" FontSize="20" Click="NumberButton_Click"/>
+			<Button Content="3" FontSize="20" Click="NumberButton_Click"/>
+			<Button Content="0" FontSize="20" Click="NumberButton_Click"/>
+			<Button Content="." FontSize="20" Click="NumberButton_Click"/>
+			<Button Content="Clear" FontSize="20" Click="ClearButton_Click"/>
+		</UniformGrid>
+
+		<Button Grid.Row="2" Grid.Column="0" FontSize="32" FontWeight="Bold" BorderThickness="3"  Margin="2" Click="PrintButton_Click">
+			<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+				<Viewbox Width="32" Height="32">
+					<Canvas Width="16" Height="16">
+						<Path Fill="Black" Data="M2.5 8a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1"/>
+						<Path Fill="Black"  Data="M5 1a2 2 0 0 0-2 2v2H2a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h1v1a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-1h1a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-1V3a2 2 0 0 0-2-2zM4 3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2H4zm1 5a2 2 0 0 0-2 2v1H2a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v-1a2 2 0 0 0-2-2zm7 2v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1"/>
+					</Canvas>
+				</Viewbox>
+				<TextBlock Text=" Print" VerticalAlignment="Center" FontSize="32" FontWeight="Bold"/>
+			</StackPanel>
+		</Button>
+
+
+		<UniformGrid Grid.Row="1" Grid.Column="1" Columns="3">
+			<TextBlock Text="EUR" FontWeight="Bold" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+				<Button FontSize="20" Margin="2" Click="ExchangeButton_Click" Tag="EUR_Bid" x:Name="BtnEurBid">
+					<StackPanel Orientation="Vertical">
+						<TextBlock Text="BLEJ" FontSize="12" HorizontalAlignment="Center"/>
+						<TextBlock x:Name="TxtEurBidRate" HorizontalAlignment="Center"/>
+					</StackPanel>
+				</Button>
+				<Button FontSize="20" Margin="2" Click="ExchangeButton_Click" Tag="EUR_Ask" x:Name="BtnEurAsk">
+					<StackPanel Orientation="Vertical">
+						<TextBlock Text="SHES"  FontSize="12" HorizontalAlignment="Center"/>
+						<TextBlock x:Name="TxtEurAskRate" HorizontalAlignment="Center"/>
+					</StackPanel>
+				</Button>
+			<!-- USD Group -->
+				<TextBlock Text="USD" FontWeight="Bold" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+				<Button FontSize="20" Margin="2" Click="ExchangeButton_Click" Tag="USD_Bid" x:Name="BtnUsdBid">
+					<StackPanel Orientation="Vertical">
+						<TextBlock Text="BLEJ"  FontSize="12" HorizontalAlignment="Center"/>
+						<TextBlock x:Name="TxtUsdBidRate" HorizontalAlignment="Center"/>
+					</StackPanel>
+				</Button>
+				<Button FontSize="20" Margin="2" Click="ExchangeButton_Click" Tag="USD_Ask" x:Name="BtnUsdAsk">
+					<StackPanel Orientation="Vertical">
+						<TextBlock Text="SHES"  FontSize="12" HorizontalAlignment="Center"/>
+						<TextBlock x:Name="TxtUsdAskRate" HorizontalAlignment="Center"/>
+					</StackPanel>
+				</Button>
+				<TextBlock Text="CHF" FontWeight="Bold" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+				<Button FontSize="20" Margin="2" Click="ExchangeButton_Click" Tag="CHF_Bid" x:Name="BtnChfBid">
+					<StackPanel Orientation="Vertical">
+						<TextBlock Text="BLEJ"  FontSize="12" HorizontalAlignment="Center"/>
+						<TextBlock x:Name="TxtChfBidRate" HorizontalAlignment="Center"/>
+					</StackPanel>
+				</Button>
+				<Button FontSize="20" Margin="2" Click="ExchangeButton_Click" Tag="CHF_Ask" x:Name="BtnChfAsk">
+					<StackPanel Orientation="Vertical">
+						<TextBlock Text="SHES"  FontSize="12" HorizontalAlignment="Center"/>
+						<TextBlock x:Name="TxtChfAskRate" HorizontalAlignment="Center"/>
+					</StackPanel>
+				</Button>
+				<TextBlock Text="GBP" FontWeight="Bold" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+				<Button FontSize="20" Margin="2" Click="ExchangeButton_Click" Tag="GBP_Bid" x:Name="BtnGbpBid">
+					<StackPanel Orientation="Vertical">
+						<TextBlock Text="BLEJ"  FontSize="12" HorizontalAlignment="Center"/>
+						<TextBlock x:Name="TxtGbpBidRate" HorizontalAlignment="Center"/>
+					</StackPanel>
+				</Button>
+				<Button FontSize="20" Margin="2" Click="ExchangeButton_Click" Tag="GBP_Ask" x:Name="BtnGbpAsk">
+					<StackPanel Orientation="Vertical">
+						<TextBlock Text="SHES"  FontSize="12" HorizontalAlignment="Center"/>
+						<TextBlock x:Name="TxtGbpAskRate" HorizontalAlignment="Center"/>
+					</StackPanel>
+				</Button>
+
+
+			
+		</UniformGrid>
+
+		<Button Grid.Row="2" Grid.Column="1" Margin="2" Padding="10" Height="40" HorizontalAlignment="Right" VerticalAlignment="Bottom" Click="SetRatesButton_Click">
+			<Viewbox>
+				<Canvas Width="16" Height="16">
+					<Path Fill="Black" Data="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492M5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0"/>
+					<Path Fill="Black" Data="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115z"/>
+				</Canvas>
+			</Viewbox>
+		</Button>
+	</Grid>
+</Window>
