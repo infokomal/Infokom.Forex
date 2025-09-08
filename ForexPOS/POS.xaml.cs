@@ -10,26 +10,18 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace ForexPOS
 {
 	/// <summary>
-	/// Interaction logic for Receipt.xaml
+	/// Interaction logic for POS.xaml
 	/// </summary>
-	public partial class Receipt : UserControl
+	public partial class POS : Window
 	{
-		public Receipt()
+		public POS()
 		{
-			this.InitializeComponent();
-		}
-
-		public ReceiptModel Source
-		{
-			get => this.DataContext as ReceiptModel;
-
-			set => this.DataContext = value;
+			InitializeComponent();
 		}
 	}
 }

@@ -2,7 +2,20 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:clr="clr-namespace:System;assembly=mscorlib"
+	   xmlns:models="clr-namespace:ForexPOS.Models"
+	   xmlns:controls="clr-namespace:ForexPOS.Controls"
         Title="MainWindow" Width="960" Height="540" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" WindowStyle="ToolWindow">
+
+
+	<Window.Resources>
+		<clr:String x:Key="SelectedCurrency">EUR</clr:String>
+		<clr:String x:Key="SelectedRateType">Bid</clr:String>
+		<clr:Double x:Key="SelectedRate">0</clr:Double>
+	</Window.Resources>
+
+	<Window.DataContext>
+		<models:PosModel />
+	</Window.DataContext>
 
 	<Grid Margin="10">
 		<Grid.RowDefinitions>
@@ -15,10 +28,12 @@
 			<ColumnDefinition Width="*"/>
 			<ColumnDefinition Width="Auto"/>
 		</Grid.ColumnDefinitions>
+		
+		
 
 		<!-- Display for input amount -->
-		<TextBox x:Name="TextBoxSource" Grid.Row="0" Grid.Column="0"  Margin="2" FontSize="36" FontWeight="Bold" IsReadOnly="True" TextAlignment="Right" Text="0.00 ALL"/>
-		<TextBox x:Name="TextBoxTarget" Grid.Row="0" Grid.Column="1"  Margin="2" FontSize="36" FontWeight="Bold" IsReadOnly="True" TextAlignment="Right" Text="0.00 EUR"/>
+		<TextBox x:Name="TextBoxSource" Grid.Row="0" Grid.Column="0" Margin="2" FontSize="36" FontWeight="Bold" IsReadOnly="True" TextAlignment="Right"/>
+		<TextBox x:Name="TextBoxTarget" Grid.Row="0" Grid.Column="1" Margin="2" FontSize="36" FontWeight="Bold" IsReadOnly="True" TextAlignment="Right"/>
 
 		<!-- Numeric Keyboard -->
 		<UniformGrid Grid.Row="1" Grid.Column="0" Columns="3" Margin="2">
@@ -37,6 +52,7 @@
 		</UniformGrid>
 
 		<Button Grid.Row="2" Grid.Column="0" FontSize="32" FontWeight="Bold" BorderThickness="3"  Margin="2" Click="PrintButton_Click">
+			
 			<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
 				<Viewbox Width="32" Height="32">
 					<Canvas Width="16" Height="16">
@@ -51,64 +67,64 @@
 
 		<UniformGrid Grid.Row="1" Grid.Column="1" Columns="3">
 			<TextBlock Text="EUR" FontWeight="Bold" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-				<Button FontSize="20" Margin="2" Click="ExchangeButton_Click" Tag="EUR_Bid" x:Name="BtnEurBid">
-					<StackPanel Orientation="Vertical">
-						<TextBlock Text="BLEJ" FontSize="12" HorizontalAlignment="Center"/>
-						<TextBlock x:Name="TxtEurBidRate" HorizontalAlignment="Center"/>
-					</StackPanel>
-				</Button>
-				<Button FontSize="20" Margin="2" Click="ExchangeButton_Click" Tag="EUR_Ask" x:Name="BtnEurAsk">
-					<StackPanel Orientation="Vertical">
-						<TextBlock Text="SHES"  FontSize="12" HorizontalAlignment="Center"/>
-						<TextBlock x:Name="TxtEurAskRate" HorizontalAlignment="Center"/>
-					</StackPanel>
-				</Button>
+			<Button FontSize="20" Margin="2" Click="ExchangeButton_Click" Tag="EUR_Bid" x:Name="BtnEurBid">
+				<StackPanel Orientation="Vertical">
+					<TextBlock Text="BLEJ" FontSize="12" HorizontalAlignment="Center"/>
+					<TextBlock HorizontalAlignment="Center" Text="{Binding Settings.EUR.Bid, StringFormat={}{0:F2}}"/>
+				</StackPanel>
+			</Button>
+			<Button FontSize="20" Margin="2" Click="ExchangeButton_Click" Tag="EUR_Ask" x:Name="BtnEurAsk">
+				<StackPanel Orientation="Vertical">
+					<TextBlock Text="SHES"  FontSize="12" HorizontalAlignment="Center"/>
+					<TextBlock HorizontalAlignment="Center" Text="{Binding Settings.EUR.Ask, StringFormat={}{0:F2}}"/>
+				</StackPanel>
+			</Button>
 			<!-- USD Group -->
-				<TextBlock Text="USD" FontWeight="Bold" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-				<Button FontSize="20" Margin="2" Click="ExchangeButton_Click" Tag="USD_Bid" x:Name="BtnUsdBid">
-					<StackPanel Orientation="Vertical">
-						<TextBlock Text="BLEJ"  FontSize="12" HorizontalAlignment="Center"/>
-						<TextBlock x:Name="TxtUsdBidRate" HorizontalAlignment="Center"/>
-					</StackPanel>
-				</Button>
-				<Button FontSize="20" Margin="2" Click="ExchangeButton_Click" Tag="USD_Ask" x:Name="BtnUsdAsk">
-					<StackPanel Orientation="Vertical">
-						<TextBlock Text="SHES"  FontSize="12" HorizontalAlignment="Center"/>
-						<TextBlock x:Name="TxtUsdAskRate" HorizontalAlignment="Center"/>
-					</StackPanel>
-				</Button>
-				<TextBlock Text="CHF" FontWeight="Bold" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-				<Button FontSize="20" Margin="2" Click="ExchangeButton_Click" Tag="CHF_Bid" x:Name="BtnChfBid">
-					<StackPanel Orientation="Vertical">
-						<TextBlock Text="BLEJ"  FontSize="12" HorizontalAlignment="Center"/>
-						<TextBlock x:Name="TxtChfBidRate" HorizontalAlignment="Center"/>
-					</StackPanel>
-				</Button>
-				<Button FontSize="20" Margin="2" Click="ExchangeButton_Click" Tag="CHF_Ask" x:Name="BtnChfAsk">
-					<StackPanel Orientation="Vertical">
-						<TextBlock Text="SHES"  FontSize="12" HorizontalAlignment="Center"/>
-						<TextBlock x:Name="TxtChfAskRate" HorizontalAlignment="Center"/>
-					</StackPanel>
-				</Button>
-				<TextBlock Text="GBP" FontWeight="Bold" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-				<Button FontSize="20" Margin="2" Click="ExchangeButton_Click" Tag="GBP_Bid" x:Name="BtnGbpBid">
-					<StackPanel Orientation="Vertical">
-						<TextBlock Text="BLEJ"  FontSize="12" HorizontalAlignment="Center"/>
-						<TextBlock x:Name="TxtGbpBidRate" HorizontalAlignment="Center"/>
-					</StackPanel>
-				</Button>
-				<Button FontSize="20" Margin="2" Click="ExchangeButton_Click" Tag="GBP_Ask" x:Name="BtnGbpAsk">
-					<StackPanel Orientation="Vertical">
-						<TextBlock Text="SHES"  FontSize="12" HorizontalAlignment="Center"/>
-						<TextBlock x:Name="TxtGbpAskRate" HorizontalAlignment="Center"/>
-					</StackPanel>
-				</Button>
+			<TextBlock Text="USD" FontWeight="Bold" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+			<Button FontSize="20" Margin="2" Click="ExchangeButton_Click" Tag="USD_Bid" x:Name="BtnUsdBid">
+				<StackPanel Orientation="Vertical">
+					<TextBlock Text="BLEJ"  FontSize="12" HorizontalAlignment="Center"/>
+					<TextBlock HorizontalAlignment="Center" Text="{Binding Settings.USD.Bid, StringFormat={}{0:F2}}"/>
+				</StackPanel>
+			</Button>
+			<Button FontSize="20" Margin="2" Click="ExchangeButton_Click" Tag="USD_Ask" x:Name="BtnUsdAsk">
+				<StackPanel Orientation="Vertical">
+					<TextBlock Text="SHES"  FontSize="12" HorizontalAlignment="Center"/>
+					<TextBlock HorizontalAlignment="Center" Text="{Binding Settings.USD.Ask, StringFormat={}{0:F2}}"/>
+				</StackPanel>
+			</Button>
+			<TextBlock Text="CHF" FontWeight="Bold" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+			<Button FontSize="20" Margin="2" Click="ExchangeButton_Click" Tag="CHF_Bid" x:Name="BtnChfBid">
+				<StackPanel Orientation="Vertical">
+					<TextBlock Text="BLEJ"  FontSize="12" HorizontalAlignment="Center"/>
+					<TextBlock HorizontalAlignment="Center" Text="{Binding Settings.CHF.Bid, StringFormat={}{0:F2}}"/>
+				</StackPanel>
+			</Button>
+			<Button FontSize="20" Margin="2" Click="ExchangeButton_Click" Tag="CHF_Ask" x:Name="BtnChfAsk">
+				<StackPanel Orientation="Vertical">
+					<TextBlock Text="SHES"  FontSize="12" HorizontalAlignment="Center"/>
+					<TextBlock HorizontalAlignment="Center" Text="{Binding Settings.CHF.Ask, StringFormat={}{0:F2}}"/>
+				</StackPanel>
+			</Button>
+			<TextBlock Text="GBP" FontWeight="Bold" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+			<Button FontSize="20" Margin="2" Click="ExchangeButton_Click" Tag="GBP_Bid" x:Name="BtnGbpBid">
+				<StackPanel Orientation="Vertical">
+					<TextBlock Text="BLEJ"  FontSize="12" HorizontalAlignment="Center"/>
+					<TextBlock HorizontalAlignment="Center" Text="{Binding Settings.GBP.Bid, StringFormat={}{0:F2}}"/>
+				</StackPanel>
+			</Button>
+			<Button FontSize="20" Margin="2" Click="ExchangeButton_Click" Tag="GBP_Ask" x:Name="BtnGbpAsk">
+				<StackPanel Orientation="Vertical">
+					<TextBlock Text="SHES"  FontSize="12" HorizontalAlignment="Center"/>
+					<TextBlock HorizontalAlignment="Center" Text="{Binding Settings.GBP.Ask, StringFormat={}{0:F2}}"/>
+				</StackPanel>
+			</Button>
 
 
-			
+
 		</UniformGrid>
 
-		<Button Grid.Row="2" Grid.Column="1" Margin="2" Padding="10" Height="40" HorizontalAlignment="Right" VerticalAlignment="Bottom" Click="SetRatesButton_Click">
+		<Button Grid.Row="2" Grid.Column="1" Margin="2" Padding="10" Height="40" HorizontalAlignment="Right" VerticalAlignment="Bottom" Click="SettingsButton_Click">
 			<Viewbox>
 				<Canvas Width="16" Height="16">
 					<Path Fill="Black" Data="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492M5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0"/>
@@ -117,4 +133,6 @@
 			</Viewbox>
 		</Button>
 	</Grid>
+	
+	
 </Window>

@@ -1,0 +1,15 @@
+﻿<Window x:Class="ForexPOS.POS"
+     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+     xmlns:local="clr-namespace:ForexPOS"
+     xmlns:clr="clr-namespace:System;assembly=mscorlib"
+     xmlns:models="clr-namespace:ForexPOS.Models"
+     xmlns:controls="clr-namespace:ForexPOS.Controls"
+     mc:Ignorable="d"
+     Title="POS" Height="450" Width="800">
+	<DockPanel LastChildFill="True">
+		<controls:Keyboard></controls:Keyboard>
+     </DockPanel>
+</Window>

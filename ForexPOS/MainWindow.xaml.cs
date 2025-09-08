@@ -1,4 +1,6 @@
-﻿using System;
+﻿using ForexPOS.Controls;
+using ForexPOS.Models;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Printing;
@@ -9,6 +11,9 @@ using System.Windows.Media;
 
 namespace ForexPOS
 {
+
+
+
 	/// <summary>
 	/// Interaction logic for MainWindow.xaml
 	/// </summary>
@@ -20,22 +25,13 @@ namespace ForexPOS
 		private double _selectedRate;
 		private string _inputValue = "0"; // Default to "0" for initial display
 
-		private readonly Dictionary<string, double> _customRates = new()
-	   {
-		  { "EurBid", 97.13 }, { "EurAsk", 97.83 },
-		  { "UsdBid", 89.50 }, { "UsdAsk", 90.10 },
-		  { "ChfBid", 101.20 }, { "ChfAsk", 102.00 },
-		  { "GbpBid", 113.40 }, { "GbpAsk", 114.25 }
-	   };
 
-
-		private SettingsModel _settings = new SettingsModel();
 
 		public MainWindow()
 		{
 			this.InitializeComponent();
-			this.LoadSettings();
 		}
+
 
 		private void NumberButton_Click(object sender, RoutedEventArgs e)
 		{
@@ -89,14 +85,27 @@ namespace ForexPOS
 			this._selectedCurrency = parts[0].Substring(0, 1).ToUpper() + parts[0].Substring(1).ToLower();
 			this._selectedRateType = parts[1].Substring(0, 1).ToUpper() + parts[1].Substring(1).ToLower();
 
-			string rateKey = $"{this._selectedCurrency}{this._selectedRateType}";
-			if (!this._customRates.TryGetValue(rateKey, out this._selectedRate))
+
+			var spread = _selectedCurrency.ToUpper() switch
 			{
-				MessageBox.Show($"Custom rate not found: {rateKey}");
-				this._selectedRate = 0;
-				this.UpdateDisplays();
-				return;
+				"EUR" => (this.DataContext as PosModel)?.Settings.EUR,
+				"USD" => (this.DataContext as PosModel)?.Settings.USD,
+				"GBP" => (this.DataContext as PosModel)?.Settings.GBP,
+				"CHF" => (this.DataContext as PosModel)?.Settings.CHF,
+				_ => null,
+			};
+
+			if(spread != null)
+			{
+				this._selectedRate = this._selectedRateType switch
+				{
+					"Bid" => spread.Bid,
+					"Ask" => spread.Ask,
+					_ => 0
+				};
 			}
+
+			(this.DataContext as PosModel).Receipt.ExchangeRate = this._selectedRate;
 
 			// Custom rate found
 			this.UpdateDisplays();
@@ -131,94 +140,82 @@ namespace ForexPOS
 
 		private void PrintButton_Click(object sender, RoutedEventArgs e)
 		{
-
-			
-
-
-			const int receiptWidth = 203; // or 384 for most 58mm printers
-
-			var header = new TextBlock
+			if(this.DataContext is not PosModel posModel || posModel.Receipt is not ReceiptModel receiptModel)
 			{
-				Text =
-					$"\nForexPOS\n" +
-					$"\n{DateTime.Now:dd.MM.yyyy HH:mm}\n" +
-					$"\n----------------\n",
-				FontFamily = new FontFamily("Consolas"),
-				FontSize = 10,
-			};
+				MessageBox.Show("E pamundur te printohet fatura!", "", MessageBoxButton.OK, MessageBoxImage.Error);
+				return;
+			}
 
 
 
+			receiptModel.Date = DateTime.Now.ToString("dd.MM.yyyy HH:mm");
 
-			// Parse and format values
-			double fromValue = 0, toValue = 0;
-			string fromCurrency = "", toCurrency = "";
+
 			if (this._selectedRateType == "Bid")
 			{
-				double.TryParse(this._inputValue, out fromValue);
-				toValue = Math.Ceiling(fromValue * this._selectedRate * 100) / 100;
-				fromCurrency = this._selectedCurrency;
-				toCurrency = "ALL";
+				receiptModel.SourceCurrency = this._selectedCurrency.ToUpper();
+				receiptModel.TargetCurrency = "ALL";				
+				double.TryParse(this._inputValue, out var sourceAmmount);
+				receiptModel.SourceAmount = sourceAmmount;
+				receiptModel.TargetAmount = sourceAmmount * this._selectedRate;
 			}
 			else
 			{
-				double.TryParse(this._inputValue, out fromValue);
-				toValue = Math.Ceiling((fromValue / this._selectedRate) * 100) / 100;
-				fromCurrency = "ALL";
-				toCurrency = this._selectedCurrency;
+				receiptModel.SourceCurrency = "ALL";
+				receiptModel.TargetCurrency = this._selectedCurrency.ToUpper();
+				double.TryParse(this._inputValue, out var sourceAmmount);
+				receiptModel.SourceAmount = sourceAmmount;
+				receiptModel.TargetAmount = sourceAmmount / this._selectedRate;
 			}
 
-			double rateValue = (this._selectedRateType == "Bid") ? this._selectedRate : 1.0 / this._selectedRate;
-			rateValue = Math.Ceiling(rateValue * 100) / 100;
+			receiptModel.CurrencyPair = $"{this._selectedCurrency.ToUpper()}/ALL";
+			receiptModel.ExchangeRate = this._selectedRate;
 
 
-
-
-			var receiptControl = new Receipt();
-			var receiptData = receiptControl.Source;
-			receiptData.Date = DateTime.Now.ToString("dd.MM.yyyy HH:mm");
-			receiptData.Source = $"{fromValue:F2} {fromCurrency}";
-			receiptData.Target = $"{toValue:F2} {toCurrency}";
-			receiptData.Change = rateValue.ToString("F2");
-
-			receiptControl.Measure(new Size(receiptData.Width, double.PositiveInfinity));
-			receiptControl.Arrange(new Rect(0, 0, receiptData.Width, receiptControl.DesiredSize.Height));
-
-			// Print directly to the configured printer
-			LocalPrintServer printServer = new LocalPrintServer();
-			PrintQueue printQueue = printServer.GetPrintQueue(_settings.Printer);
-			PrintTicket printTicket = printQueue.DefaultPrintTicket;
-			PrintDialog pd = new PrintDialog();
-			pd.PrintQueue = printQueue;
-			pd.PrintTicket = printTicket;
-			pd.PrintVisual(receiptControl, "Forex Receipt");
-
-			this.ClearButton_Click(sender, e);
-		}
-
-		private void SetRatesButton_Click(object sender, RoutedEventArgs e)
-		{
-			var dlg = new Settings(_settings);
-			if (dlg.ShowDialog() == true)
+			var receipt = new Receipt();
+			receipt.DataContext = receiptModel;
+			var dialog = new Window
 			{
-				this.LoadSettings();
-				this.UpdateDisplays();
+				Title = "Paraqit Faturen",
+				Content = receipt,
+				SizeToContent = SizeToContent.WidthAndHeight,
+				WindowStartupLocation = WindowStartupLocation.CenterOwner,
+				Owner = this
+			};
+			
+
+			receipt.Measure(new Size(receiptModel.Width, double.PositiveInfinity));
+			receipt.Arrange(new Rect(0, 0, receiptModel.Width, receipt.DesiredSize.Height));
+
+
+			if (this.DataContext is PosModel model)
+			{
+				// Print directly to the configured printer
+				LocalPrintServer printServer = new LocalPrintServer();
+				PrintQueue printQueue = printServer.GetPrintQueue(model.Settings.PrinterName);
+				PrintTicket printTicket = printQueue.DefaultPrintTicket;
+				PrintDialog pd = new PrintDialog();
+				pd.PrintQueue = printQueue;
+				pd.PrintTicket = printTicket;
+				pd.PrintVisual(receipt, "Forex Receipt");
+
+				this.ClearButton_Click(sender, e);
 			}
+			dialog.ShowDialog();
 		}
 
-
-		private void LoadSettings()
+		private void SettingsButton_Click(object sender, RoutedEventArgs e)
 		{
-			this._settings = SettingsModel.Load();
-
-			if (this.TxtEurBidRate != null) this.TxtEurBidRate.Text = $"{this._settings.EurBid:F2} ALL";
-			if (this.TxtEurAskRate != null) this.TxtEurAskRate.Text = $"{this._settings.EurAsk:F2} ALL";
-			if (this.TxtUsdBidRate != null) this.TxtUsdBidRate.Text = $"{this._settings.UsdBid:F2} ALL";
-			if (this.TxtUsdAskRate != null) this.TxtUsdAskRate.Text = $"{this._settings.UsdAsk:F2} ALL";
-			if (this.TxtChfBidRate != null) this.TxtChfBidRate.Text = $"{this._settings.ChfBid:F2} ALL";
-			if (this.TxtChfAskRate != null) this.TxtChfAskRate.Text = $"{this._settings.ChfAsk:F2} ALL";
-			if (this.TxtGbpBidRate != null) this.TxtGbpBidRate.Text = $"{this._settings.GbpBid:F2} ALL";
-			if (this.TxtGbpAskRate != null) this.TxtGbpAskRate.Text = $"{this._settings.GbpAsk:F2} ALL";
+			if(this.DataContext is PosModel model)
+			{
+				var dlg = new Settings();
+				dlg.Source = model.Settings;
+				if (dlg.ShowDialog() == true)
+				{
+					this.UpdateDisplays();
+				}
+			}
+			
 		}
 	}
 }

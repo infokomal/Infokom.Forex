@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ForexPOS.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,16 +14,16 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace ForexPOS
+namespace ForexPOS.Controls
 {
 	/// <summary>
-	/// Interaction logic for Keyboard.xaml
+	/// Interaction logic for Receipt.xaml
 	/// </summary>
-	public partial class Keyboard : UserControl
+	public partial class Receipt : UserControl
 	{
-		public Keyboard()
+		public Receipt()
 		{
-			InitializeComponent();
+			this.InitializeComponent();
 		}
 	}
 }
